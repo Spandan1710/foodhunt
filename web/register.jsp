@@ -9,7 +9,7 @@
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 
-<script type="text/javascript" src="script.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Register</title>
 
@@ -26,15 +26,13 @@
 					<br>${message}<br>
 					
 					Username: <input type="text" name="username" class="form-control input-lg"> <br>
-					<div id="username_error"></div><br>
-					Customer name: <input type="text" name="name" class="form-control input-lg"><br>
-					
+
 					Password: <input type="password" name="password" id="password" class="form-control input-lg"> 
 					<br>
-					Re-Type Password: <input type="password" name="retry-password" id="retry-password" class="form-control input-lg"> 
+					Confirm Password: <input type="password" name="confirm-password" id="confirm-password" class="form-control input-lg">
 					<br>
 					<div id="password_error"></div><br>
-					<input type="submit" name="submit" value="register"  class="btn btn-lg btn-primary btn-block">
+					<input type="submit" name="submit" value="Regitser"  class="btn btn-lg btn-primary btn-block">
 					<input type="reset" name="reset"  class="btn btn-lg btn-primary btn-block">
 					
 				</form>

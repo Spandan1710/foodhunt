@@ -3,4 +3,58 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
+    <servlet>
+        <servlet-name>LoginController</servlet-name>
+        <servlet-class>edu.utdallas.foodhunt.usermanagement.servlet.LoginController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddRestaurantController</servlet-name>
+        <servlet-class>edu.utdallas.foodhunt.restaurantmanagement.servlets.AddRestaurantController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteRestaurantController</servlet-name>
+        <servlet-class>edu.utdallas.foodhunt.restaurantmanagement.servlets.DeleteRestaurantController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>MakeReservationController</servlet-name>
+        <servlet-class>edu.utdallas.foodhunt.restaurantmanagement.servlets.MakeReservationController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CancelReservationController</servlet-name>
+        <servlet-class>edu.utdallas.foodhunt.reservation.servlets.CancelReservationController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ModifyRestaurantController</servlet-name>
+        <servlet-class>edu.utdallas.foodhunt.restaurantmanagement.servlets.ModifyRestaurantController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginController</servlet-name>
+        <url-pattern>/LoginController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddRestaurantController</servlet-name>
+        <url-pattern>/AddRestaurantController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteRestaurantController</servlet-name>
+        <url-pattern>/DeleteRestaurantController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MakeReservationController</servlet-name>
+        <url-pattern>/MakeReservationController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CancelReservationController</servlet-name>
+        <url-pattern>/CancelReservationController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ModifyRestaurantController</servlet-name>
+        <url-pattern>/ModifyRestaurantController</url-pattern>
+    </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>login.jsp</welcome-file>
+    </welcome-file-list>
+
+
 </web-app>
+

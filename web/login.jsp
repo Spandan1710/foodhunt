@@ -1,4 +1,4 @@
-<%@page import="db.DbManager"%>
+<%@page import="edu.utdallas.foodhunt.utils.db.DBUtils"%>
 <%@page import="java.sql.Connection"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -11,7 +11,7 @@
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 
-<script type="text/javascript" src="script.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Login Page</title>
 </head>
@@ -34,7 +34,7 @@
 				Username: <input type="text" name="username" id="username" class="form-control input-lg"><br>
 				Password: <input type="password" name="password" id="password" class="form-control input-lg"><br>
 				<input type="submit" name="submit" value="login" class="btn btn-lg btn-primary btn-block"><br>
-				<a href="register.jsp">registration</a>
+				<a href="register.jsp">Sign Up</a>
 				
 				</form>
 				

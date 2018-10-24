@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 
 public class DBUtils implements DBCon {
 
-    public Connection getDbConnection(){
+    public static Connection getDbConnection(){
         try{
             Class.forName("com.mysql.jdbc.Driver");
             return DriverManager.getConnection(connectionUrl,user,password);
