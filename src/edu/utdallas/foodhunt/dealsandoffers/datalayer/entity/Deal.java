@@ -1,11 +1,10 @@
 package edu.utdallas.foodhunt.dealsandoffers.datalayer.entity;
 
 public class Deal {
-    private  int dealID;
+    private int dealID;
     private String deal;
-    private int restaurantID;
     private boolean isPremium;
-    private boolean isActive;
+
 
     public int getDealID() {
         return dealID;
@@ -23,14 +22,6 @@ public class Deal {
         this.deal = deal;
     }
 
-    public int getRestaurantID() {
-        return restaurantID;
-    }
-
-    public void setRestaurantID(int restaurantID) {
-        this.restaurantID = restaurantID;
-    }
-
     public boolean isPremium() {
         return isPremium;
     }
@@ -39,11 +30,4 @@ public class Deal {
         isPremium = premium;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
 }

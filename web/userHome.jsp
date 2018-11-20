@@ -15,6 +15,7 @@
     <script src="js/userSearch.js"></script>
     <script src="js/searchJS.js"></script>
     <script src="js/makeReservation.js"></script>
+    <script src="js/geoLocation.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 
     <style>
@@ -73,7 +74,7 @@
     </style>
 </head>
 <body>
-<%request.setAttribute("restaurants", new RestaurantService().getRestaurants());%>
+<!--%request.setAttribute("restaurants", new RestaurantService().getRestaurants());%-->
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -98,6 +99,8 @@
     </div>
 </nav>
 
+
+
 <div class="container-fluid text-center">
     <div class="row content">
         <div class="col-sm-2 sidenav">
@@ -107,28 +110,52 @@
 
             <h2>Search a Restaurant</h2>
             <p>Filter the restaurants using the search field and click on 'Make a Booking'</p>
-            <input id="myInput" type="text" placeholder="Search..">
+
+            <form action="SearchController" method="post">
+                <input type="hidden" id="latitude" name="latitude" value=" ">
+                <input type="hidden" id="longitude" name="longitude" value=" ">
+                <input id="myInput" name="keyword" type="text" placeholder="Keyword" onfocus="geoFindMe()">
+                <button value="Search" type="submit">Search</button>
+            </form>
+
+
             <%
-                String msg = null;
+                String msg = "";
                 msg = (String) session.getAttribute("resMessage");
-                String alertMessage=null;
-                String alertClass=null;
+                String alertMessage = "";
+                String alertClass = "";
+                int restaurantId = 0;
                 if (msg != null) {
-                    if(msg.equalsIgnoreCase("success")){
-                        alertMessage="Reservation is done successfully.";
-                        alertClass="alert alert-success";
+                    if (msg.equalsIgnoreCase("success")) {
+                        alertMessage = "Reservation is done successfully.";
+                        alertClass = "alert alert-success";
                     }
-                    if(msg.equalsIgnoreCase("fail")){
-                        alertMessage="Unable to book the restaurant.";
-                        alertClass="alert alert-danger";
+                    if (msg.equalsIgnoreCase("fail")) {
+                        alertMessage = "Unable to book the restaurant.";
+                        alertClass = "alert alert-danger";
+                        restaurantId = (int) request.getAttribute("restaurantId");
                     }
             %>
-            <div class="<%=alertClass%>" role="alert"><%=alertMessage%></div>
+            <div class="<%=alertClass%>" role="alert"><%=alertMessage%>
+            </div>
+
             <%
-                    session.removeAttribute("resMessage");
-                } else {
-                    session.setAttribute("resMessage", "");
-                }
+                if (msg.equalsIgnoreCase("fail")) { %>
+
+            <form action="AlternateSearchController" method="post">
+                <input type="hidden" id="latitude1" name="latitude" value=" ">
+                <input type="hidden" id="longitude1" name="longitude" value=" ">
+                <input id="restaurantId" type="hidden"name="restaurantId" value="<%=restaurantId%>">
+                <button class="btn btn-success" onmouseenter="geoFindAlternate()" type="submit">Search Similar Restaurant</button>
+            </form>
+
+
+
+            <% }
+                session.removeAttribute("resMessage");
+            } else {
+                session.setAttribute("resMessage", "");
+            }
             %>
             <br><br>
 
@@ -141,9 +168,14 @@
                 </tr>
                 </thead>
                 <tbody id="myTable">
+                <c:if test="${restaurants.size()} == 0">
+                    <p><b>No Result Found</b></p>
+                </c:if>
                 <c:forEach items="${restaurants}" var="restaurant">
                     <tr>
-                        <td><a href="restaurantDetail.jsp?restaurantID=${restaurant.getId()}">${restaurant.getName()}</a></td>
+                        <td>
+                            <a href="restaurantDetail.jsp?restaurantID=${restaurant.getId()}">${restaurant.getName()}</a>
+                        </td>
                         <td>${restaurant.getRestaurantType()}</td>
                         <td>
                             <button type="button" class="btn btn-success" data-toggle="modal"
@@ -160,13 +192,17 @@
         </div>
         <div class="col-sm-2 sidenav">
             <div class="well">
-                <p><span class="glyphicon glyphicon-cog"></span> &nbsp;Edit Account</p>
+                <a href="viewOffers.jsp"><span class="glyphicon glyphicon-plus"></span> &nbsp;View Deals and Offers</a>
             </div>
-
             <div class="well">
                 <a href="myBookings.jsp"><span class="glyphicon glyphicon-file"></span> &nbsp;My Bookings</a>
             </div>
-
+            <div class="well">
+                <a href="premiumMember.jsp"><span class="glyphicon glyphicon-star"></span> &nbsp;Become a Premium Member</a>
+            </div>
+            <div class="well">
+                <p><span class="glyphicon glyphicon-cog"></span> &nbsp;Edit Account</p>
+            </div>
         </div>
     </div>
 </div>
@@ -183,8 +219,6 @@
                 <h4 class="modal-title">Make a Booking </h4>
             </div>
             <div class="modal-body">
-
-
                 <p>Please fill out the following details to make a booking: </p>
 
                 <div class="row content">
@@ -193,7 +227,7 @@
                     </div>
                     <div class="col-sm-8 text-left">
                         <form id="bookingform" action="MakeReservationController" method="post">
-                            <input id = "id" type="hidden"name="id">
+                            <input id="id" type="hidden" name="id">
                             <div class="form-group">
                                 <label class="control-label" for="bookingDate">Booking Date:</label>
                                 <input type="date" class="form-control" id="bookingDate" name="bookingDate">
@@ -210,8 +244,6 @@
                                 <label class="control-label" for="feedback">Feedback:</label>
                                 <input type="text" class="form-control" id="feedback" name="feedback">
                             </div>
-                            <%--<button type="submit"  name="submit"  class="btn btn-success">Submit</button>--%>
-
                             <div class="modal-footer">
                                 <button id="Yes" type="submit" class="btn btn-success" data-dismiss="modal">Book
                                 </button>
@@ -235,7 +267,6 @@
 
     </div>
 </div>
-
 <footer class="container-fluid text-center">
     <p>Food Hunt - Copyright &copy; 2018</p>
 </footer>

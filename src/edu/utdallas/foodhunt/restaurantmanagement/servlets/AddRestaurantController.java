@@ -31,8 +31,8 @@ public class AddRestaurantController extends HttpServlet {
         float accessibilityRating = Float.parseFloat(request.getParameter("accessibilityrating"));
         float ambienceRating = Float.parseFloat(request.getParameter("ambiencerating"));
         float overallRating = Float.parseFloat(request.getParameter("overallrating"));
-        Time openTime = Time.valueOf(request.getParameter("opentiming")+":00");
-        Time closeTime = Time.valueOf(request.getParameter("closetiming")+":00");
+        Time openTime = Time.valueOf(request.getParameter("opentiming") + ":00");
+        Time closeTime = Time.valueOf(request.getParameter("closetiming") + ":00");
         int seatCapacity = Integer.parseInt(request.getParameter("seatcapacity"));
         String tableArrangement = request.getParameter("tablearrangement");
         boolean homeDelivery = Boolean.parseBoolean(request.getParameter("homedelivery"));
@@ -65,11 +65,10 @@ public class AddRestaurantController extends HttpServlet {
         RestaurantService restaurantService = new RestaurantService();
         boolean addRestaurant = restaurantService.addRestaurant(restaurant);
         if (submitType.equals("Add") && addRestaurant) {
-            request.setAttribute("restaurants", new RestaurantService().getRestaurants());
+            request.setAttribute("restaurants", restaurantService.getRestaurants());
             session.setAttribute("rmessage", "success");
-            request.getRequestDispatcher("adminHome.jsp").forward(request, response);
-        }
-        else{
+            request.getRequestDispatcher("addRestaurant.jsp").forward(request, response);
+        } else {
             session.setAttribute("rmessage", "fail");
             request.getRequestDispatcher("addRestaurant.jsp").forward(request, response);
         }

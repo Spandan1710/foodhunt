@@ -12,10 +12,11 @@ public class UserDao {
     private Connection conn;
     private PreparedStatement ps;
 
-    public  UserDao(){
+    public UserDao() {
         conn = DBUtils.getDbConnection();
-        ps=null;
+        ps = null;
     }
+
     public User validateUser(User checkUser) {
         User user = new User();
         try {
@@ -44,7 +45,7 @@ public class UserDao {
             }
             return user;
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
         return null;
     }
@@ -56,13 +57,25 @@ public class UserDao {
             ps.setString(1, newUser.getUsername());
             ps.setString(2, newUser.getPassword());
             ps.setBoolean(3, newUser.getAdmin());
-            status = ps.execute()?1:0;
+            status = ps.executeUpdate()>0 ? 1 : 0;
         } catch (Exception e) {
             status = -1;// if username already exists
-            System.out.println(e);
+            e.printStackTrace();
         }
         return status;
     }
+
+    public boolean setPremiumMembership(String userName) {
+        try {
+            ps = conn.prepareStatement("update user set isPremiumMember=TRUE where username=?");
+            ps.setString(1, userName);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     @Override
     protected void finalize() throws Throwable {

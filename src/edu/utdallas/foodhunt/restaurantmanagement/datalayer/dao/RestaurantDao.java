@@ -1,5 +1,6 @@
 package edu.utdallas.foodhunt.restaurantmanagement.datalayer.dao;
 
+import edu.utdallas.foodhunt.restaurantmanagement.datalayer.entity.Menu;
 import edu.utdallas.foodhunt.restaurantmanagement.datalayer.entity.Restaurant;
 import edu.utdallas.foodhunt.utils.db.DBUtils;
 
@@ -43,10 +44,10 @@ public class RestaurantDao {
             ps.setBoolean(19, restaurant.isHomeDelivery());
             ps.setString(20, restaurant.getTags());
             ps.setString(21, restaurant.getPictureUrl());
-            ps.setBoolean(22,restaurant.isStatus());
-            return ps.executeUpdate()>0;
+            ps.setBoolean(22, restaurant.isStatus());
+            return ps.executeUpdate() > 0;
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
         return false;
     }
@@ -84,7 +85,7 @@ public class RestaurantDao {
             return status > 0;
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return false;
     }
@@ -92,7 +93,7 @@ public class RestaurantDao {
     public Restaurant getRestaurant(String id) {
         Restaurant restaurant = new Restaurant();
         try {
-            ps = conn.prepareStatement("select * from restaurant where restaurant_id = ?");
+            ps = conn.prepareStatement("select * from restaurant where restaurant_id = ? and isActive=TRUE");
             ps.setInt(1, Integer.parseInt(id));
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -122,7 +123,7 @@ public class RestaurantDao {
             }
             return restaurant;
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
         return null;
     }
@@ -162,7 +163,7 @@ public class RestaurantDao {
             }
             return restaurants;
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
         return null;
     }
@@ -171,14 +172,14 @@ public class RestaurantDao {
         List<Restaurant> restaurants = new ArrayList<>();
 
         try {
-            ps = conn.prepareStatement("select distinct * from restaurant where rname like %" + keyword + "% OR " + "rtype like %" + keyword + "% OR" +
-                    "address like %" + keyword + "% or city like %" + keyword + "% or state like %" + keyword + "% or zip like %" + Integer.parseInt(keyword) + "% or tag like %" + keyword + "%");
+            ps = conn.prepareStatement("select distinct * from restaurant where rname like '%" + keyword + "%' OR " + "rtype like '%" + keyword + "%' OR " +
+                    "address like '%" + keyword + "%' or city like '%" + keyword + "%' or state like '%" + keyword + "%' or tag like '%" + keyword + "%'");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Restaurant restaurant = new Restaurant();
                 restaurant.setId(rs.getInt("restaurant_id"));
                 restaurant.setName(rs.getString("rname"));
-                restaurant.setName(rs.getString("rtype"));
+                restaurant.setRestaurantType(rs.getString("rtype"));
                 restaurant.setAddress(rs.getString("address"));
                 restaurant.setCity(rs.getString("city"));
                 restaurant.setState(rs.getString("state"));
@@ -199,11 +200,19 @@ public class RestaurantDao {
                 restaurant.setTags(rs.getString("tag"));
                 restaurant.setPictureUrl(rs.getString("picture_url"));
                 restaurant.setStatus(rs.getBoolean("isActive"));
-                restaurants.add(restaurant);
+                if (rs.getBoolean("isActive")) restaurants.add(restaurant);
+            }
+            List<Restaurant> menulist = new MenuDao().getRestaurantList(keyword,this);
+            if(menulist!=null && menulist.size() > 0){
+                for(Restaurant restaurant: menulist){
+                    if(!restaurants.contains(restaurant)){
+                        restaurants.add(restaurant);
+                    }
+                }
             }
             return restaurants;
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         return null;
@@ -213,13 +222,38 @@ public class RestaurantDao {
         try {
             ps = conn.prepareStatement("update restaurant set isActive=false where restaurant_id = ?");
             ps.setInt(1, Integer.parseInt(id));
-            return ps.executeUpdate()>0;
+            return ps.executeUpdate() > 0;
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
         return false;
     }
 
+    public List<Menu> getMenuItems(String id) {
+        List<Menu> menuList = new ArrayList<>();
+        List<Integer> menuIds = new ArrayList<>();
+        MenuDao menuDao = new MenuDao();
+        Menu menu;
+
+        try {
+            ps = conn.prepareStatement("select menuId from menu where restaurant_id=?");
+            ps.setInt(1, Integer.parseInt(id));
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                menuIds.add(Integer.valueOf(rs.getInt("menuId")));
+            }
+
+            for (int i = 0; i < menuIds.size(); i++) {
+                menu = menuDao.getMenuItem(String.valueOf(menuIds.get(i)));
+                menuList.add(menu);
+            }
+
+            return menuList;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @Override
     protected void finalize() throws Throwable {

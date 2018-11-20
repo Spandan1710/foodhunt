@@ -27,6 +27,43 @@
         <servlet-name>ModifyRestaurantController</servlet-name>
         <servlet-class>edu.utdallas.foodhunt.restaurantmanagement.servlets.ModifyRestaurantController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AddMenuItemController</servlet-name>
+        <servlet-class>edu.utdallas.foodhunt.restaurantmanagement.servlets.AddMenuItemController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteMenuItemController</servlet-name>
+        <servlet-class>edu.utdallas.foodhunt.restaurantmanagement.servlets.DeleteMenuItemController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditMenuItemController</servlet-name>
+        <servlet-class>edu.utdallas.foodhunt.restaurantmanagement.servlets.EditMenuItemController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditMenuItemVisibilityController</servlet-name>
+        <servlet-class>edu.utdallas.foodhunt.restaurantmanagement.servlets.EditMenuItemVisibilityController
+        </servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddDealController</servlet-name>
+        <servlet-class>edu.utdallas.foodhunt.dealsandoffers.servlets.AddDealController
+        </servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddMembershipController</servlet-name>
+        <servlet-class>edu.utdallas.foodhunt.usermanagement.servlet.AddMembershipController
+        </servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SearchController</servlet-name>
+        <servlet-class>edu.utdallas.foodhunt.search.servlets.SearchController
+        </servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AlternateSearchController</servlet-name>
+        <servlet-class>edu.utdallas.foodhunt.search.servlets.AlternateSearchController
+        </servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
         <url-pattern>/LoginController</url-pattern>
@@ -51,10 +88,42 @@
         <servlet-name>ModifyRestaurantController</servlet-name>
         <url-pattern>/ModifyRestaurantController</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddMenuItemController</servlet-name>
+        <url-pattern>/AddMenuItemController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteMenuItemController</servlet-name>
+        <url-pattern>/DeleteMenuItemController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditMenuItemController</servlet-name>
+        <url-pattern>/EditMenuItemController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditMenuItemVisibilityController</servlet-name>
+        <url-pattern>/EditMenuItemVisibilityController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddDealController</servlet-name>
+        <url-pattern>/AddDealController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddMembershipController</servlet-name>
+        <url-pattern>/AddMembershipController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SearchController</servlet-name>
+        <url-pattern>/SearchController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AlternateSearchController</servlet-name>
+        <url-pattern>/AlternateSearchController</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>login.jsp</welcome-file>
     </welcome-file-list>
-
 
 </web-app>
 

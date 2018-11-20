@@ -19,33 +19,31 @@ import javax.servlet.http.HttpSession;
 public class MakeReservationController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        HttpSession session=request.getSession(true);
-        Date bookingDate= Date.valueOf(request.getParameter("bookingDate"));
-        Time bookingTime= Time.valueOf(request.getParameter("bookingTime")+":00");
-        int bookingSeats=Integer.parseInt(request.getParameter("bookingSeats"));
-        String feedback=request.getParameter("feedback");
-        int reservationID=Integer.parseInt(request.getParameter("id"));
-        String username=session.getAttribute("userName").toString();
-        Reservation reservation=new Reservation();
+        HttpSession session = request.getSession(true);
+        Date bookingDate = Date.valueOf(request.getParameter("bookingDate"));
+        Time bookingTime = Time.valueOf(request.getParameter("bookingTime") + ":00");
+        int bookingSeats = Integer.parseInt(request.getParameter("bookingSeats"));
+        String feedback = request.getParameter("feedback");
+        int restaurantID = Integer.parseInt(request.getParameter("id"));
+        String username = session.getAttribute("userName").toString();
+        Reservation reservation = new Reservation();
         reservation.setCancelled(false);
         reservation.setFeedback(feedback);
         reservation.setBookedSeats(bookingSeats);
         reservation.setBookingDate(bookingDate);
         reservation.setBookingTime(bookingTime);
-        reservation.setRestaurantID(reservationID);
+        reservation.setRestaurantID(restaurantID);
         reservation.setUsername(username);
-        ReservationService reservationService=new ReservationService();
-        Boolean isReservationDone=reservationService.addReservation(reservation);
+        ReservationService reservationService = new ReservationService();
+        Boolean isReservationDone = reservationService.addReservation(reservation);
         request.setAttribute("restaurants", new RestaurantService().getRestaurants());
-        if(isReservationDone){
-            request.setAttribute("reservations", new ReservationService().getReservations());
-            request.setAttribute("msg","restaurant is booked successfully");
+        if (!isReservationDone) {
+            request.setAttribute("reservations", reservationService.getReservations());
             session.setAttribute("resMessage", "success");
             request.getRequestDispatcher("userHome.jsp").forward(request, response);
-        }
-        else{
-            request.setAttribute("msg","unable to book the restaurant");
+        } else {
             session.setAttribute("resMessage", "fail");
+            request.setAttribute("restaurantId",restaurantID);
             request.getRequestDispatcher("userHome.jsp").forward(request, response);
         }
     }

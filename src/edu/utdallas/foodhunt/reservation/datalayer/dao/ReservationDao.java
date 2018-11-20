@@ -31,7 +31,7 @@ public class ReservationDao {
                 return false;
             }
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
         return false;
     }
@@ -56,7 +56,7 @@ public class ReservationDao {
             }
             return reservations;
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
         return null;
     }
@@ -64,15 +64,35 @@ public class ReservationDao {
     public boolean addReservation(Reservation reservation) {
         try {
             ps = conn.prepareStatement("insert into reservation(username,restaurant_id,booking_date,booking_time,booked_seats,feedback) values (?,?,?,?,?,?)");
-            ps.setString(1,reservation.getUsername());
-            ps.setInt(2,reservation.getRestaurantID());
-            ps.setDate(3,reservation.getBookingDate());
-            ps.setTime(4,reservation.getBookingTime());
-            ps.setInt(5,reservation.getBookedSeats());
-            ps.setString(6,reservation.getFeedback());
-            return ps.executeUpdate() >0;
+            ps.setString(1, reservation.getUsername());
+            ps.setInt(2, reservation.getRestaurantID());
+            ps.setDate(3, reservation.getBookingDate());
+            ps.setTime(4, reservation.getBookingTime());
+            ps.setInt(5, reservation.getBookedSeats());
+            ps.setString(6, reservation.getFeedback());
+            return ps.executeUpdate() > 0;
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    public boolean isAlreadyActiveReservation(Reservation reservation) {
+        try {
+            ps = conn.prepareStatement("select * from reservation where username=? and restaurant_id=? and booking_date=? and booking_time=? and isCancelled=False");
+            ps.setString(1, reservation.getUsername());
+            ps.setInt(2, reservation.getRestaurantID());
+            ps.setDate(3, reservation.getBookingDate());
+            ps.setTime(4, reservation.getBookingTime());
+            ResultSet resultSet = ps.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return false;
     }
@@ -80,5 +100,23 @@ public class ReservationDao {
     @Override
     protected void finalize() throws Throwable {
         conn.close();
+    }
+
+    public boolean modifyReservation(Reservation reservation) {
+        try {
+            ps = conn.prepareStatement("update reservation set booking_date=? and booking_time=? where id=?");
+            ps.setInt(3, reservation.getReservationID());
+            ps.setDate(1,reservation.getBookingDate());
+            ps.setTime(2,reservation.getBookingTime());
+            int result = ps.executeUpdate();
+            if (result > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

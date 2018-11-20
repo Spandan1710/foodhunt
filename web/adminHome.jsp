@@ -3,7 +3,7 @@
 <%@ page import="edu.utdallas.foodhunt.restaurantmanagement.businesslayer.RestaurantService" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,6 +16,8 @@
     <script src="js/addValidation.js"></script>
     <script src="js/userSearch.js"></script>
     <script src="js/searchJS.js"></script>
+    <script src="js/geoLocation.js"></script>
+
     <style>
         /* Remove the navbar's default margin-bottom and rounded borders */
         .navbar {
@@ -62,6 +64,7 @@
     </style>
 </head>
 <body>
+
 <%request.setAttribute("restaurants", new RestaurantService().getRestaurants());%>
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
@@ -121,14 +124,17 @@
         <span class="sr-only">Next</span>
     </a>
 </div>
+<input type="hidden" id="latitude" value =" ">
+<input type="hidden" id="longitude" value =" ">
+
 
 <div class="container text-center">
     <br>
     <div class="row">
         <div class="col-sm-9">
-                <p>Filter the restaurants using the search field</p>
-                <input id="myInput" type="text" placeholder="Search.." value="keyword">
-
+            <p>Filter the restaurants using the search field</p>
+            <input id="myInput" type="text" placeholder="keyword">
+            <button value="Search" onclick="geoFindMe();">Search</button>
             <br/><br/>
             <table id="table">
                 <thead>
@@ -142,11 +148,15 @@
                 <tbody id="myTable">
                 <c:forEach items="${restaurants}" var="restaurant">
                     <tr>
-                        <td><a href="restaurantDetail.jsp?restaurantID=${restaurant.getId()}">${restaurant.getName()}</a></td>
-                        <td>${restaurant.getRestaurantType()}</td>
-                        <td><a type="button" class="btn btn-warning" href="modifyRestaurant.jsp?id=${restaurant.getId()}">Modify Restaurant</a></td>
                         <td>
-                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal" onclick="modalSet(${restaurant.getId()})">Delete
+                            <a href="restaurantDetail.jsp?restaurantID=${restaurant.getId()}">${restaurant.getName()}</a>
+                        </td>
+                        <td>${restaurant.getRestaurantType()}</td>
+                        <td><a type="button" class="btn btn-warning"
+                               href="modifyRestaurant.jsp?id=${restaurant.getId()}">Modify Restaurant</a></td>
+                        <td>
+                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal"
+                                    onclick="modalSet(${restaurant.getId()})">Delete
                                 Restaurant
                             </button>
                         </td>
@@ -165,9 +175,11 @@
             </div>
 
             <div class="well">
-                <p><span class="glyphicon glyphicon-plus"></span> &nbsp;Add Deals and Offers</p>
+                <a href="addDeals.jsp"><span class="glyphicon glyphicon-plus"></span> &nbsp;Add Deals and Offers</a>
             </div>
-
+            <div class="well">
+                <a href="viewOffers.jsp"><span class="glyphicon glyphicon-plus"></span> &nbsp;View Deals and Offers</a>
+            </div>
             <div class="well">
                 <p><span class="glyphicon glyphicon-cog"></span> &nbsp;Edit Account</p>
             </div>
@@ -209,20 +221,21 @@
     <p>Food Hunt - Copyright &copy; 2018</p>
 </footer>
 <script>
+
     $('#myInput').keypress(function (e) {
-        if(e.which == 13){
+        if (e.which == 13) {
             $('#search').submit();
         }
     })
 
-    function modalSet(val){
-        $("#myModal #Yes").attr("href","DeleteRestaurantController?id="+val)
+    function modalSet(val) {
+        $("#myModal #Yes").attr("href", "DeleteRestaurantController?id=" + val)
     }
 
     $("#Yes").click(function (e) {
         $.ajax({
-            type:"POST",
-            url:$("#Yes").attr("href")
+            type: "POST",
+            url: $("#Yes").attr("href")
         }).done(function () {
             location.reload()
         })

@@ -84,10 +84,10 @@
         </div>
         <div class="col-sm-8 text-left">
             <%
-                String msg = null;
+                String msg = "";
                 msg = (String) session.getAttribute("rmessage");
-                String alertMessage = null;
-                String alertClass = null;
+                String alertMessage = "";
+                String alertClass = "";
                 if (msg != null) {
                     if (msg.equalsIgnoreCase("success")) {
                         alertMessage = "Restaurant is addedd successfully.";
@@ -253,7 +253,7 @@
                     </div>
 
 
-                    <button type="submit" name="submit" class="btn btn-success btn-lg">Add</button>
+                    <button type="submit" name="submit" value="Add" class="btn btn-success btn-lg">Add</button>
                     <a type="button" href="adminHome.jsp" class="btn btn-danger btn-lg">Cancel</a>
 
                 </form>

@@ -1,11 +1,12 @@
-<%@ page import="edu.utdallas.foodhunt.reservation.businesslayer.ReservationService" %>
+<%@ page import="edu.utdallas.foodhunt.restaurantmanagement.businesslayer.RestaurantService" %>
+<%@ page import="edu.utdallas.foodhunt.dealsandoffers.businesslayer.DealService" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>My Bookings</title>
+    <title>My Offers</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -14,7 +15,7 @@
     <script src="js/addValidation.js"></script>
     <script src="js/userSearch.js"></script>
     <script src="js/searchJS.js"></script>
-
+    <script src="js/makeReservation.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 
     <style>
@@ -73,7 +74,12 @@
     </style>
 </head>
 <body>
-<%request.setAttribute("reservations", new ReservationService().getReservations());%>
+<%
+
+    request.setAttribute("memberType", session.getAttribute("isUserPremium"));
+    request.setAttribute("user", session.getAttribute("userName"));
+    request.setAttribute("deals", new DealService().getDeals(session.getAttribute("userName").toString(), Boolean.parseBoolean(session.getAttribute("isUserPremium").toString())));
+%>
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -87,12 +93,11 @@
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
                 <%
-                    String username = "";
+                    String userType = "";
                     if (session.getAttribute("userName") != null) {
-                        username = (String) session.getAttribute("userName");
+                        userType = (String) session.getAttribute("userName");
                     }
-
-                    if (username.equalsIgnoreCase("admin")) {
+                    if (userType.equalsIgnoreCase("admin")) {
                 %>
                 <li class="active"><a href="adminHome.jsp">Home</a></li>
                 <%} else {%>
@@ -114,61 +119,34 @@
 
         </div>
         <div class="col-sm-8 text-left">
-            <%
-                String msg = "";
-                msg = (String) session.getAttribute("cancelResMsg");
-                String alertMessage = "";
-                String alertClass = "";
-                if (msg != null) {
-                    if (msg.equalsIgnoreCase("success")) {
-                        alertMessage = "Reservation is cancelled successfully.";
-                        alertClass = "alert alert-success";
-                    }
-                    if (msg.equalsIgnoreCase("fail")) {
-                        alertMessage = "Unable to cancel the reservation.";
-                        alertClass = "alert alert-danger";
-                    }
-            %>
-            <div class="<%=alertClass%>" role="alert"><%=alertMessage%>
-            </div>
-            <%
-                    session.removeAttribute("cancelResMsg");
-                } else {
-                    session.setAttribute("cancelResMsg", "");
-                }
-            %>
-            <h2>My Bookings</h2>
-
+            <h2>Deals and Offers</h2>
             <br><br>
-            <c:if test="${reservations.size()!=0}">
+            <c:if test="${deals.size()!=0}">
                 <table>
                     <thead>
                     <tr>
-                        <th>Restaurant ID</th>
-                        <th>Booking Date</th>
-                        <th>Booking Time</th>
-                        <th>No. of Persons</th>
-                        <th></th>
+                        <th>Deal Description</th>
+                        <th>Deal Type</th>
                     </tr>
                     </thead>
                     <tbody id="myTable">
-                    <c:forEach items="${reservations}" var="reservation">
-                    <tr>
-                        <td>${reservation.getRestaurantID()}</td>
-                        <td>${reservation.getBookingDate()}</td>
-                        <td>${reservation.getBookingTime()}</td>
-                        <td>${reservation.getBookedSeats()}</td>
-                        <td>
-                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalCancel"
-                                    onclick="modalSet(${reservation.getReservationID()})">Cancel Reservation
-                            </button>
-                        </td>
-                    </tr>
+                        <%--user check--%>
+                    <c:forEach items="${deals}" var="deal">
+                        <tr>
+                            <td>${deal.getDeal()}</td>
+                            <c:if test="${deal.premium}">
+                                <td>Premium Deal</td>
+                            </c:if>
+                            <c:if test="${!deal.premium}">
+                                <td>Normal Deal</td>
+                            </c:if>
+                        </tr>
                     </c:forEach>
+                    </tbody>
                 </table>
             </c:if>
-            <c:if test="${reservations.size()==0}"><p class="alert alert-danger">Oops!! Currently you have no reservations.</p></c:if>
-
+            <c:if test="${deals.size()==0}"><p class="alert alert-danger">Oops!! Currently there are no deals available
+                for you.</p></c:if>
 
         </div>
         <div class="col-sm-2 sidenav">
@@ -176,52 +154,12 @@
                 <p><span class="glyphicon glyphicon-cog"></span> &nbsp;Edit Account</p>
             </div>
 
+            <div class="well">
+                <a href="myBookings.jsp"><span class="glyphicon glyphicon-file"></span> &nbsp;My Bookings</a>
+            </div>
+
         </div>
     </div>
 </div>
-
-
-<!-- Modal -->
-<div id="myModalCancel" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Confirm Cancel</h4>
-            </div>
-            <div class="modal-body">
-
-                <p>Are you sure you want to Cancel this Booking?</p>
-
-
-            </div>
-            <div class="modal-footer">
-                <button id="Yes" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<footer class="container-fluid text-center">
-    <p>Food Hunt - Copyright &copy; 2018</p>
-</footer>
-<script>
-    function modalSet(val) {
-        $("#myModalCancel #Yes").attr("href", "CancelReservationController?id=" + val)
-    }
-
-    $("#Yes").click(function (e) {
-        $.ajax({
-            type: "POST",
-            url: $("#Yes").attr("href")
-        }).done(function () {
-            location.reload()
-        })
-    })
-</script>
 </body>
 </html>

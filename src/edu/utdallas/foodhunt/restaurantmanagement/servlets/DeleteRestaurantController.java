@@ -13,21 +13,15 @@ import java.io.IOException;
 
 public class DeleteRestaurantController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        String restaurantID=request.getParameter("id");
+        String restaurantID = request.getParameter("id");
         RestaurantService restaurantService = new RestaurantService();
         boolean deleteRestaurant = restaurantService.deleteRestaurant(restaurantID);
-        if(deleteRestaurant){
-
+        if (deleteRestaurant) {
             request.getRequestDispatcher("adminHome.jsp").forward(request, response);
-        }
-        else{
-
-            response.sendRedirect("adminHome.jsp");
+        } else {
             request.getRequestDispatcher("adminHome.jsp").forward(request, response);
         }
     }
-
 
 
 }

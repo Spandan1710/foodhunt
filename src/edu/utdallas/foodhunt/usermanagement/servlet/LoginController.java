@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 
 public class LoginController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session=request.getSession(true);
+        HttpSession session = request.getSession(true);
         UserDao userDao = new UserDao();
         String username = request.getParameter("username");
         String password = request.getParameter("password");
@@ -26,8 +26,9 @@ public class LoginController extends HttpServlet {
         User validUser = userDao.validateUser(user);
 
         if (submitType.equals("login") && validUser != null && validUser.getUsername() != null && validUser.getActive()) {
-            session.setAttribute("userName",validUser.getUsername());
-            request.setAttribute("MSG","User logged in successfully");
+            session.setAttribute("userName", validUser.getUsername());
+            session.setAttribute("isUserPremium", validUser.getPremiumMember());
+            request.setAttribute("MSG", "User logged in successfully");
             request.setAttribute("restaurants", new RestaurantService().getRestaurants());
             if (validUser.getAdmin()) {
                 request.getRequestDispatcher("adminHome.jsp").forward(request, response);
@@ -38,18 +39,17 @@ public class LoginController extends HttpServlet {
         } else if (submitType.equals("login") && validUser != null && validUser.getUsername() != null && !validUser.getActive()) {
             request.setAttribute("message", "Sorry! You are no more an active user. Please contact helpdesk!");
             request.getRequestDispatcher("login.jsp").forward(request, response);
-        } else if (submitType.equals("register")) {
+        } else if (submitType.equals("Register")) {
             validUser.setUsername(request.getParameter("username"));
             validUser.setPassword(request.getParameter("password"));
             validUser.setAdmin(userType);
-            if (userDao.register(validUser)>0) {
+            if (userDao.register(validUser) > 0) {
                 request.setAttribute("successMessage", "Registration done, please login!");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
-            } else if (userDao.register(validUser)==0) {
+            } else if (userDao.register(validUser) == 0) {
                 request.setAttribute("message", "Sorry! Some error occurred in the database.");
                 request.getRequestDispatcher("register.jsp").forward(request, response);
-            }
-            else{
+            } else {
                 request.setAttribute("message", "Sorry! This username is already in use. Please use a different username.");
                 request.getRequestDispatcher("register.jsp").forward(request, response);
             }

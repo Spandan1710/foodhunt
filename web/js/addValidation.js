@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 function validateAddForm() {
@@ -23,19 +23,10 @@ function validateAddForm() {
         alert("city must be filled out");
         return false;
     }
-    var state = document.getElementById("state").value;
-    if (name == "") {
-        alert("state must be filled out");
-        return false;
-    }
+
     var zip = document.getElementById("zip").value;
     if (zip == "") {
         alert("zip must be filled out");
-        return false;
-    }
-    var state = document.getElementById("state").value;
-    if (name == "") {
-        alert("state must be filled out");
         return false;
     }
     return true;

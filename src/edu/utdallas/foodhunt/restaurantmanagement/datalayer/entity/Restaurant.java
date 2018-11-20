@@ -1,6 +1,8 @@
 package edu.utdallas.foodhunt.restaurantmanagement.datalayer.entity;
 
 import java.sql.Time;
+import java.util.List;
+import java.util.Objects;
 
 public class Restaurant {
     private int id;
@@ -26,6 +28,18 @@ public class Restaurant {
     private String tags;
     private String pictureUrl;
     private boolean status;
+    double distanceFromUser;
+    int similarityScore;
+
+    public List<Menu> getMenuList() {
+        return menuList;
+    }
+
+    public void setMenuList(List<Menu> menuList) {
+        this.menuList = menuList;
+    }
+
+    private List<Menu> menuList;
 
     public int getId() {
         return id;
@@ -209,5 +223,36 @@ public class Restaurant {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public double getDistanceFromUser() {
+        return distanceFromUser;
+    }
+
+    public void setDistanceFromUser(double distanceFromUser) {
+        this.distanceFromUser = distanceFromUser;
+    }
+
+    public int getSimilarityScore() {
+        return similarityScore;
+    }
+
+    public void setSimilarityScore(int similarityScore) {
+        this.similarityScore = similarityScore;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Restaurant that = (Restaurant) o;
+        return id == that.id &&
+                Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, name);
     }
 }

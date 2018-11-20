@@ -7,11 +7,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Time;
 
 public class ModifyRestaurantController extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(true);
         String name = request.getParameter("name");
         String restaurantType = request.getParameter("type");
         String address = request.getParameter("address");
@@ -28,8 +30,8 @@ public class ModifyRestaurantController extends HttpServlet {
         float overallRating = Float.parseFloat(request.getParameter("overallrating"));
         String openTimeString = request.getParameter("opentiming");
         String closeTimeString = request.getParameter("closetiming");
-        if(openTimeString.split(":").length == 2) openTimeString = openTimeString+":00" ;
-        if(closeTimeString.split(":").length == 2) closeTimeString = closeTimeString+":00" ;
+        if (openTimeString.split(":").length == 2) openTimeString = openTimeString + ":00";
+        if (closeTimeString.split(":").length == 2) closeTimeString = closeTimeString + ":00";
         Time openTime = Time.valueOf(openTimeString);
         Time closeTime = Time.valueOf(closeTimeString);
         int seatCapacity = Integer.parseInt(request.getParameter("seatcapacity"));
@@ -62,12 +64,12 @@ public class ModifyRestaurantController extends HttpServlet {
         restaurant.setTags(tags);
         restaurant.setPictureUrl(pictureUrl);
         restaurant.setStatus(true);
-        if(new RestaurantService().modifyRestaurant(restaurant)){
-            request.setAttribute("msg","Restaurant is modified successfully.");
-            request.getRequestDispatcher("adminHome.jsp").forward(request, response);
-        }else{
-            request.setAttribute("msg","Unable to modify restaurant details.");
-            request.getRequestDispatcher("adminHome.jsp").forward(request, response);
+        if (submitType.equals("Modify") && new RestaurantService().modifyRestaurant(restaurant)) {
+            session.setAttribute("rModMessage", "success");
+            request.getRequestDispatcher("modifyRestaurant.jsp").forward(request, response);
+        } else {
+            session.setAttribute("rModMessage", "fail");
+            request.getRequestDispatcher("modifyRestaurant.jsp").forward(request, response);
         }
     }
 }

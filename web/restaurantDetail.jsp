@@ -1,8 +1,10 @@
 <%@ page import="edu.utdallas.foodhunt.restaurantmanagement.businesslayer.RestaurantService" %>
 <%@ page import="edu.utdallas.foodhunt.restaurantmanagement.datalayer.entity.Restaurant" %>
+<%@ page import="edu.utdallas.foodhunt.restaurantmanagement.datalayer.entity.Menu" %>
+<%@ page import="java.util.List" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,13 +77,21 @@
 </head>
 <body>
 <%
-String restaurantID ="";
-Restaurant restaurant=null;
-if(request.getParameter("restaurantID")!= null){
-    restaurantID = request.getParameter("restaurantID");
-    RestaurantService restaurantService=new RestaurantService();
-    restaurant=restaurantService.getRestaurant(restaurantID);
-}
+    String restaurantID = "";
+    Restaurant restaurant = null;
+    List<Menu> menuItems = null;
+    if (request.getParameter("restaurantID") != null) {
+        restaurantID = request.getParameter("restaurantID");
+
+    } else if (request.getAttribute("restaurantID") != null) {
+        restaurantID = (String) request.getAttribute("restaurantID");
+    }
+
+    RestaurantService restaurantService = new RestaurantService();
+    restaurant = restaurantService.getRestaurant(restaurantID);
+    menuItems = restaurantService.getMenuItems(restaurantID);
+    request.setAttribute("menuItems", menuItems);
+
 %>
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
@@ -95,7 +105,17 @@ if(request.getParameter("restaurantID")!= null){
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
+                <%
+                    String username = "";
+                    if (session.getAttribute("userName") != null) {
+                        username = (String) session.getAttribute("userName");
+                    }
+
+                    if (username.equalsIgnoreCase("admin")) {
+                %>
                 <li class="active"><a href="adminHome.jsp">Home</a></li>
+                <%} else {%>
+                <li class="active"><a href="userHome.jsp">Home</a><%}%>
                 <li><a href="#">About</a></li>
                 <li><a href="#">Contact</a></li>
             </ul>
@@ -122,7 +142,8 @@ if(request.getParameter("restaurantID")!= null){
                 </div>
                 <div class="col-md-8 details">
                     <blockquote>
-                        <h5><%=restaurant.getName()%></h5>
+                        <h5><%=restaurant.getName()%>
+                        </h5>
                     </blockquote>
                     <p>
 
@@ -131,53 +152,124 @@ if(request.getParameter("restaurantID")!= null){
                         <tbody>
                         <tr>
                             <td>Restaurant Type :</td>
-                            <td><%=restaurant.getRestaurantType()%></td>
+                            <td><%=restaurant.getRestaurantType()%>
+                            </td>
                         </tr>
                         <tr>
                             <td>Food Rating :</td>
-                            <td><%=restaurant.getFoodRating()%></td>
+                            <td><%=restaurant.getFoodRating()%>
+                            </td>
                         </tr>
                         <tr>
                             <td>Accessibility Rating :</td>
-                            <td><%=restaurant.getAccessibilityRating()%></td>
+                            <td><%=restaurant.getAccessibilityRating()%>
+                            </td>
                         </tr>
                         <tr>
                             <td>Ambience Rating :</td>
-                            <td><%=restaurant.getAmbienceRating()%></td>
+                            <td><%=restaurant.getAmbienceRating()%>
+                            </td>
                         </tr>
                         <tr>
                             <td>Overall Rating :</td>
-                            <td><%=restaurant.getOverallRating()%></td>
+                            <td><%=restaurant.getOverallRating()%>
+                            </td>
                         </tr>
                         <tr>
                             <td>Opening Time :</td>
-                            <td><%=restaurant.getOpenTime()%></td>
+                            <td><%=restaurant.getOpenTime()%>
+                            </td>
                         </tr>
                         <tr>
                             <td>Closing Time :</td>
-                            <td><%=restaurant.getCloseTime()%></td>
+                            <td><%=restaurant.getCloseTime()%>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
-
                     </p>
+                    <%
+                        String userType = "";
+                        if (session.getAttribute("userName") != null) {
+                            userType = (String) session.getAttribute("userName");
+                        }
+
+                        if (userType.equalsIgnoreCase("admin")) {
+                    %>
+                    <div>
+                        <a href="addMenuItem.jsp?restaurantID=<%=restaurant.getId()%>"><span
+                                class="glyphicon glyphicon-plus"></span> &nbsp;Add Menu Item</a>
+                    </div>
+                    <a type="button" href="adminHome.jsp" class="btn btn-danger btn-lg">Go Back</a>
+                    <%} else {%>
+                    <a type="button" href="userHome.jsp" class="btn btn-danger btn-lg">Go Back</a>
+                    <%}%>
+                    <table id="menuTable">
+                        <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Cuisine</th>
+                            <th>Price</th>
+                            <%
+                                String user1 = "";
+                                if (session.getAttribute("userName") != null) {
+                                    user1 = (String) session.getAttribute("userName");
+                                }
+
+                                if (user1.equalsIgnoreCase("admin")) {
+                            %>
+                            <th>Edit Item</th>
+                            <th>Delete Item</th>
+                            <th>Change Visibility</th>
+                            <%}%>
+                        </tr>
+                        </thead>
+                        <tbody id="menuTable1">
+                        <c:forEach items="${menuItems}" var="menuItem">
+                            <%
+                                String user = "";
+                                if (session.getAttribute("userName") != null) {
+                                    user = (String) session.getAttribute("userName");
+                                }
+
+                                if (user.equalsIgnoreCase("admin") && menuItems.size() != 0) {
+                            %>
+                            <tr>
+                                <td>${menuItem.getMenuItem()}</td>
+                                <td>${menuItem.getCuisine()}</td>
+                                <td>${menuItem.getMenuPrice()}</td>
+
+                                <td><a type="button" class="btn btn-success"
+                                       href="editMenuItem.jsp?menuId=${menuItem.getMenuId()}">Edit</a></td>
+                                <td>
+                                    <button type="button" class="btn btn-danger" data-toggle="modal"
+                                            data-target="#myModal1" onclick="modalSet1(${menuItem.getMenuId()})">Delete
+                                    </button>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger" data-toggle="modal"
+                                            data-target="#myModal2" onclick="modalSet2(${menuItem.getMenuId()})">Change
+                                        Visibility
+                                    </button>
+                                </td>
+                            </tr>
+                            <%} else if (!user.equalsIgnoreCase("admin") && menuItems.size() != 0) {%>
+                            <c:if test="${menuItem.active}">
+                                <tr>
+                                    <td>${menuItem.getMenuItem()}</td>
+                                    <td>${menuItem.getCuisine()}</td>
+                                    <td>${menuItem.getMenuPrice()}</td>
+                                </tr>
+                            </c:if>
+                            <%}%>
+                        </c:forEach>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <br>
             <br>
-            <%
-                String userType="";
-                if(session.getAttribute("userName")!=null) {
-                    userType = (String) session.getAttribute("userName");
-                }
 
-                if(userType.equalsIgnoreCase("admin")){
-            %>
-            <a type="button" href="adminHome.jsp" class="btn btn-danger btn-lg">Go Back</a>
-            <%}
-            else{%>
-            <a type="button" href="userHome.jsp" class="btn btn-danger btn-lg">Go Back</a>
-            <%}%>
 
         </div>
         <div class="col-sm-2 sidenav">
@@ -186,11 +278,90 @@ if(request.getParameter("restaurantID")!= null){
         </div>
     </div>
 </div>
+<!-- Modal -->
+<div id="myModal1" class="modal fade" role="dialog">
+    <div class="modal-dialog">
 
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Confirm Delete</h4>
+            </div>
+            <div class="modal-body">
+
+                <p>Are you sure you want to Delete this menu item?</p>
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button id="Yes" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
+
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="myModal2" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Confirm Visibility</h4>
+            </div>
+            <div class="modal-body">
+
+                <p>Are you sure you want to change the visibility of this menu item?</p>
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button id="Yes1" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
+
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 <footer class="container-fluid text-center">
     <p>Food Hunt - Copyright &copy; 2018</p>
 </footer>
+<script>
+    function modalSet1(val) {
+        $("#myModal1 #Yes").attr("href", "DeleteMenuItemController?menuId=" + val)
+    }
 
+    $("#Yes").click(function (e) {
+        $.ajax({
+            type: "POST",
+            url: $("#Yes").attr("href")
+        }).done(function () {
+            location.reload()
+        })
+    })
+
+    function modalSet2(val) {
+        $("#myModal2 #Yes1").attr("href", "EditMenuItemVisibilityController?menuId=" + val)
+    }
+
+    $("#Yes1").click(function (e) {
+        $.ajax({
+            type: "POST",
+            url: $("#Yes1").attr("href")
+        }).done(function () {
+            location.reload()
+        })
+    })
+
+</script>
 </body>
 </html>
